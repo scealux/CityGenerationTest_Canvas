@@ -3,6 +3,27 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 var buildings = [];
 var sites = [];
+var hostL = [],
+  tagL = [],
+  toolL = [],
+  topicL = [],
+  categoryL = [];
+
+//Setup Buttons
+var fromJSONButton = document.getElementById("fromJSON");
+fromJSONButton.addEventListener("click", fromJSON);
+
+var toJSONButton = document.getElementById("toJSON");
+toJSONButton.addEventListener("click", toJSON);
+
+var addButton = document.getElementById("addButton");
+addButton.addEventListener("click", addNewSite);
+
+var clearButton = document.getElementById("clearButton");
+clearButton.addEventListener("click", clearFields);
+
+var logButton = document.getElementById("logData");
+logButton.addEventListener("click", logData);
 
 //Get input from text fields on demand
 var sub = {
@@ -65,11 +86,15 @@ function site(building, title, host, tags, tool, topic, category, isCapital) {
 function init() {
   //Set up canvas
   canvas.width = window.innerWidth;
-  canvas.height = 400;
+  canvas.height = window.innerHeight - 200;
+
+  //Clear variables
+  buildings = [];
+  sites = [];
 
   //Populate city
   //For the 9ish chunks surrounding the user...
-  cityFromJSON();
+  //fromJSON();
 
   //Begin update loop
   window.requestAnimationFrame(draw);
@@ -89,62 +114,86 @@ function draw() {
   //window.requestAnimationFrame(draw);
 }
 
-function cityFromJSON() {
-  //Place Anchors at Points from storage
-  //Read JSON for "chunk"
-  //For each building in JSON, convert it to object and push to buildings[]
-  //For each site in JSON, convert to object and push to sites[];
-}
-
-function tester() {
-  console.log(sub.category());
-}
-
 function addNewSite() {
-  console.log("Adding new node...");
-  var nSite = new site(
-    0, //building
-    sub.title(),
-    sub.host(),
-    sub.tags(),
-    sub.tool(),
-    sub.topic(),
-    sub.category(),
-    false //isCapital
-  );
+  if (sub.title() !== "") {
+    console.log("Adding new node...");
+    var nSite = new site(
+      0, //building
+      sub.title(),
+      sub.host(),
+      sub.tags(),
+      sub.tool(),
+      sub.topic(),
+      sub.category(),
+      false //isCapital
+    );
 
-  console.log(nSite);
+    var influences = getInfluences();
+    console.log("With influences: ");
+    console.log(influences);
+    var numBuildings = buildings.length;
 
-  var numInfluences = countInfluences();
-  var numNodes = buildings.length;
-
-  if (numNodes == 0) {
-    var nBuild = new building(id, true, 0, 0, 1); //id, isCapital, x, y, numSites
-    //Add node in center
-    //Read textbox values
-    //Add values as capitals
+    if (numBuildings === 0) {
+      //If it's the first building...
+      //Add it in the center and make it the capital of its highest weighted influence
+      //Find heighest weighted influence
+      var nBuild = new building(influences[1], true, 0, 0, 1); //id, isCapital, x, y, numSites
+      [];
+    } else {
+      //Read textbox values
+      // var info = {};
+      //Read checkbox values into "info"
+      //if (x.checked){
+      //info.push(x[i].id)
+      //}
+      //New NODE with VALUES
+      //Find capitals for checked inputs
+      //var R = [];
+    }
   } else {
-    //Read textbox values
-    // var info = {};
-    //Read checkbox values into "info"
-    //if (x.checked){
-    //info.push(x[i].id)
-    //}
-    //New NODE with VALUES
-    //Find capitals for checked inputs
-    //var R = [];
+    console.log("Didn't add, no title.");
   }
 }
 
-function countInfluences() {
+function getInfluences() {
+  //Collect influences as well as higest weighted one.
   var checks = document.getElementsByClassName("nodeCheck");
-  var counter = 0;
+  var highest = 0;
+  var infs = [];
   for (var i = 0; i < checks.length; i++) {
     if (checks[i].checked === true) {
-      counter++;
+      //If an influence is checked
+      var cat = checks[i].id.split("-")[0]; //Derive the category
+      var z = new influ(cat, sub[cat]()); //Create new influence
+      infs.push(z); //Add it to the influences
+
+      //START HERE
+      console.log([String(cat + "W")]);
+      // if ([String(cat + "W")] > highest){
+
+      // }
     }
   }
-  return counter;
+  return infs;
+}
+
+function influ(category, value) {
+  this.category = category;
+  this.value = value;
+}
+
+function centroidOfPoints(points) {
+  //NOT TESTED
+  //add all the poitns together and
+  var xs = 0; //totals x values
+  var ys = 0; //totals y values
+  var tot = points.length / 2; //number of coordinates
+  for (var i = 0; i < tot; i += 2) {
+    //add each to the total
+    xs += points[i];
+    ys += points[i + 1];
+  }
+  return [xs / tot, ys / tot]; //return average
 }
 
 function findInfoinData(x, y, info) {
@@ -154,33 +203,6 @@ function findInfoinData(x, y, info) {
     }
   }
   return false;
-}
-
-function addNewNode() {
-  console.log("Adding new node...");
-  //Title Host Tags Tool Topic Category
-
-  //Find number of possible anchors.
-
-  if (document.getElementById("tagsCheck").checked) {
-    //Add each tag to influences
-    numInfluences += tags.length - 1;
-  }
-
-  //Put together array of anchor nodes
-  var nodeAnchors = [];
-  for (var i = 0; i < 3; i++) {}
-
-  function findXinY(string, array) {
-    for (var i = 0; i < array.length; i++) {}
-  }
-
-  function getRndInt(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-  }
-  //Find selected anchors
-  //Create three springs and attach them
-  //
 }
 
 function calculateCentroid(x1, y1, x2, y2, x3, y3) {
@@ -199,21 +221,29 @@ function clearFields() {
   for (var i = 0; i < checks.length; i++) {
     checks[i].checked = false;
   }
+  console.log("Fields Cleared");
+}
+
+function toJSON() {
+  console.log("To JSON");
+  //Export sites to JSON
+}
+
+function fromJSON() {
+  console.log("From JSON");
+  //Place Anchors at Points from storage
+  //Read JSON for "chunk"
+  //For each building in JSON, convert it to object and push to buildings[]
+  //For each site in JSON, convert to object and push to sites[];
 }
 
 function logData() {
-  console.log(nodeData);
+  console.log(sites);
 }
 
 window.onresize = function(event) {
   init();
 };
-var addButton = document.getElementById("addButton");
-addButton.addEventListener("click", addNewSite);
 
-var clearButton = document.getElementById("clearButton");
-clearButton.addEventListener("click", clearFields);
-
-var logButton = document.getElementById("logData");
-logButton.addEventListener("click", logData);
+//Initialize
 init();

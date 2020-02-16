@@ -11,30 +11,30 @@
     <canvas id="myCanvas" width="1000" height="1000"></canvas>
 
     <form>
-      <input type="radio" name="centering" id="centroid" value="0" /> Centroid
+      <input type="radio" name="centering" id="centroid" value="0" checked />
+      Centroid
       <input type="radio" name="centering" id="weighted-centroid" value="1" />
       Weighted-Centroid
       <input type="radio" name="centering" id="spring" value="2" disabled />
       Spring<br />
 
-      <input type="checkbox" id="titleCheck" class="nodeCheck" />
       Title: <input type="text" id="title" class="nodeField" />
 
-      <input type="checkbox" id="hostCheck" class="nodeCheck" />
+      <input type="checkbox" id="host-Check" class="nodeCheck" />
       Host: <input type="text" id="host" class="nodeField" />
       <br />
 
-      <input type="checkbox" id="tagsCheck" class="nodeCheck" />
+      <input type="checkbox" id="tags-Check" class="nodeCheck" />
       Tags (comma-separated): <input type="text" id="tags" class="nodeField" />
 
-      <input type="checkbox" id="toolCheck" class="nodeCheck" />
+      <input type="checkbox" id="tool-Check" class="nodeCheck" />
       Tool: <input type="text" id="tool" class="nodeField" />
       <br />
 
-      <input type="checkbox" id="topicCheck" class="nodeCheck" />
+      <input type="checkbox" id="topic-Check" class="nodeCheck" />
       Topic: <input type="text" id="topic" class="nodeField" />
 
-      <input type="checkbox" id="categoryCheck" class="nodeCheck" />
+      <input type="checkbox" id="category-Check" class="nodeCheck" />
       Category: <input list="categories" id="category" />
       <datalist id="categories">
         <option value="Math"> </option>
@@ -45,7 +45,8 @@
 
       <br />
 
-      <p>Check three boxes <em>OR</em> up to three including the tags box.</p>
+      <input type="button" id="fromJSON" value="Load from JSON" /> &nbsp;
+      <input type="button" id="toJSON" value="Export to JSON" /> &nbsp;
       <input type="button" id="addButton" value="Add Resource" /> &nbsp;
       <input type="button" id="clearButton" value="Clear Fields" /> &nbsp;
       <input type="button" id="logData" value="Print data to console" />
