@@ -4,7 +4,8 @@ var ctx = canvas.getContext("2d");
 
 var capA = []; //active capitals
 var capD = []; //dormant capitals
-var sites = [];
+var sites = []; //websites & related info
+var buildings = []; // buildings on the map
 
 //Setup Buttons
 var fromJSONButton = document.getElementById("fromJSON");
@@ -82,6 +83,15 @@ function site(capital, title, host, tags, tool, topic, category) {
   };
 }
 
+function building(x, y, sites, height) {
+  this.x = x;
+  this.y = y;
+  this.sites = sites;
+  this.height = function() {
+    return this.sites.length;
+  };
+}
+
 //
 function init() {
   //Set up canvas
@@ -92,6 +102,7 @@ function init() {
   capA = [];
   capD = [];
   sites = [];
+  buildings = [];
 
   //Begin update loop
   window.requestAnimationFrame(draw);
@@ -127,8 +138,23 @@ function addNewSite() {
     var influences = getInfluences();
     console.log(influences);
 
-    //For unique capitals, add them
+    //Find "anchor" capitals
+    var anchors = findAnchors(influences);
 
+    //For influences, add them as new capitals (AROUND ANCHORS)
+    for (var i = 0; i < influences.length; i++) {
+      //Make capitals for each of the unique influences
+      var newCoords = capCoords();
+      var nCap = new capital(
+        influences[i].value, //IDs as influence
+        newCoords.x, //
+        newCoords.y
+      );
+      capA.push(nCap);
+    }
+
+    var capCoords = [];
+    for (i = 0; i < influences.length; i++) {}
     //Then find the capitals coordinates
     //Feed them into centroid
 
@@ -136,24 +162,25 @@ function addNewSite() {
     //if none, create one.
     //Add site with reference to building
 
-    if (sites.length === 0) {
-      //If it's the first site...
-      for (var i = 0; i < influences.length; i++) {
-        //Make capitals for each of the unique influences
-        var newCoords = capCoords();
-        var nCap = new capital(
-          influences[i].value, //IDs as influence
-          newCoords.x, //
-          newCoords.y
-        );
-        capA.push(nCap);
-      }
-    }
     //Find capitals
     for (var i = 0; i < capA.length; i++) {}
   } else {
     console.log("Didn't add, no title.");
   }
+}
+
+function findAnchors(influences) {
+  var anchors = [];
+  for (var i = 0; i < influences.length; i++) {
+    var found = findInCaps(influences[i].value);
+    if (found !== undefined) {
+      //ADD FOUND TO ANCHOR ARRAY
+      anchors.push(found);
+      //REMOVE FROM INFLUENCE ARRAY
+      //influences.splice(i,1)
+    }
+  }
+  return anchors;
 }
 
 function capCoords() {
@@ -254,7 +281,7 @@ function centroidOfPoints(points) {
   return [xs / tot, ys / tot]; // return average
 }
 
-function findCap(value) {
+function findInCaps(value) {
   // Find a capital where its value matches
   var cap = capD.find(element => element.id == value); // Check dormant
   if (cap == undefined) {
